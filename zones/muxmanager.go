@@ -1,7 +1,6 @@
 package zones
 
 import (
-	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -53,17 +52,10 @@ func NewMuxManager(path string, reg RegistrationAPI) (*MuxManager, error) {
 	return mm, err
 }
 
-func (mm *MuxManager) Run(ctx context.Context) {
-	for {
-		err := mm.reload()
-		if err != nil {
-			log.Printf("error reading zones: %s", err)
-		}
-		select {
-		case <-time.After(2 * time.Second):
-		case <-ctx.Done():
-			return
-		}
+func (mm *MuxManager) Run() {
+	err := mm.reload()
+	if err != nil {
+		log.Printf("error reading zones: %s", err)
 	}
 }
 
@@ -148,7 +140,7 @@ func (mm *MuxManager) reload() error {
 
 			(mm.lastRead[zoneName]).hash = sha256
 
-			mm.addHandler(zoneName, zone)
+			mm.AddHandler(zoneName, zone)
 		}
 	}
 
@@ -167,7 +159,7 @@ func (mm *MuxManager) reload() error {
 	return parseErr
 }
 
-func (mm *MuxManager) addHandler(name string, zone *Zone) {
+func (mm *MuxManager) AddHandler(name string, zone *Zone) {
 	oldZone := mm.zonelist[name]
 	zone.SetupMetrics(oldZone)
 	zone.setupHealthTests()
@@ -189,7 +181,7 @@ func (mm *MuxManager) setupPgeodnsZone() {
 	label.Weight = make(map[uint16]int)
 	zone.Labels[""] = label
 	zone.AddSOA()
-	mm.addHandler(zoneName, zone)
+	mm.AddHandler(zoneName, zone)
 }
 
 func (mm *MuxManager) setupRootZone() {

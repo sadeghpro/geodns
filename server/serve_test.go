@@ -31,7 +31,7 @@ func TestServe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Loading test zones: %s", err)
 	}
-	go mm.Run(ctx)
+	go mm.Run()
 
 	go func() {
 		srv.ListenAndServe(ctx, PORT)

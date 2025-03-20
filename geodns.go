@@ -39,6 +39,7 @@ import (
 	"github.com/abh/geodns/v3/appconfig"
 	"github.com/abh/geodns/v3/applog"
 	"github.com/abh/geodns/v3/health"
+	"github.com/abh/geodns/v3/http"
 	"github.com/abh/geodns/v3/monitor"
 	"github.com/abh/geodns/v3/querylog"
 	"github.com/abh/geodns/v3/server"
@@ -257,11 +258,7 @@ func main() {
 	if err != nil {
 		log.Printf("error loading zones: %s", err)
 	}
-
-	g.Go(func() error {
-		muxm.Run(ctx)
-		return nil
-	})
+	muxm.Run()
 
 	for _, host := range inter {
 		host := host
@@ -282,7 +279,7 @@ func main() {
 
 	if len(*flaghttp) > 0 {
 		g.Go(func() error {
-			hs := NewHTTPServer(muxm, serverInfo)
+			hs := http.NewHTTPServer(muxm, serverInfo, *flagconfig)
 			err := hs.Run(ctx, *flaghttp)
 			return err
 		})

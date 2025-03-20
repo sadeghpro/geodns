@@ -24,6 +24,7 @@ type AppConfig struct {
 	HTTP struct {
 		User     string
 		Password string
+		Token    string
 	}
 	QueryLog struct {
 		Path    string

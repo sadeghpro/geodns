@@ -62,8 +62,12 @@ func (zone *Zone) ReadZoneFile(fileName string) (zerr error) {
 
 	//log.Println(objmap)
 
-	var data map[string]interface{}
+	return zone.ReadZoneJson(objmap)
+}
 
+func (zone *Zone) ReadZoneJson(objmap map[string]interface{}) (zerr error) {
+	var data map[string]interface{}
+	var err error
 	for k, v := range objmap {
 		//log.Printf("k: %s v: %#v, T: %T\n", k, v, v)
 
